@@ -25,7 +25,7 @@ const Answer=(props)=>{
   return(
     <div className="col-md-5">
     {props.selectedNumbers.map((number,i) =>
-      <span key={i}>
+      <span key={i} onClick={() => props.mistake(number)}>
       {number}
       </span>
     )}
@@ -67,6 +67,15 @@ class Game extends Component{
     }))
 
 };
+mistake=(clickedNumber)=>{
+    // if(this.state.selectedNumbers.indexOf(clickedNumber)>=0){
+    //   return;
+    // }
+  this.setState(prevState=>({
+    selectedNumbers:prevState.selectedNumbers.concat(clickedNumber)
+  }))
+
+};
   render(){
   return (
     <div className="container">
@@ -76,7 +85,7 @@ class Game extends Component{
     <div className="row">
     <Stars starsstate={this.state.randomnoofstarts}/>
     <Button/>
-    <Answer selectedNumbers={this.state.selectedNumbers}/>
+    <Answer selectedNumbers={this.state.selectedNumbers} mistake={this.state.mistake}/>
     </div>
     <br/>
     <Numbers selectedNumbers={this.state.selectedNumbers} selectedNumber={this.selectedNumber}/>
