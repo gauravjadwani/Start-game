@@ -5,11 +5,11 @@ import * as lodash from 'lodash';
 
 
 const Stars=(props)=>{
-  const noofstars=1+Math.floor(Math.random()*9);
+console.log(props);
 
   return(
   <div className="col-md-5">
-  {lodash.range(noofstars).map(i=> <i key={i} className="fa fa-star"><FaIcon/></i>)}
+  {lodash.range(props.starsstate).map(i=> <i key={i} className="fa fa-star"><FaIcon/></i>)}
 
   </div>
 );
@@ -23,8 +23,12 @@ const Button=(props)=>{
 }
 const Answer=(props)=>{
   return(
-    <div>
-    {props.selectedNumbers.map(i=> <i key={i} className="fa fa-star"><FaIcon/></i>)}
+    <div className="col-md-5">
+    {props.selectedNumbers.map((number,i) =>
+      <span key={i}>
+      {number}
+      </span>
+    )}
     </div>
 );
 }
@@ -38,7 +42,7 @@ const Numbers=(props)=>{
     }
   }
   return(
-  <div className=" card col-md-5">
+  <div className=" card ">
   {Numbers.list.map((number,i) =>
     <span key={i} className={check(number)} onClick={() => props.selectedNumber(number)}>{number}
     </span>
@@ -51,13 +55,18 @@ const Numbers=(props)=>{
 Numbers.list=lodash.range(1,10);
 class Game extends Component{
   state={
-    selectedNumbers:[]
+    selectedNumbers:[],
+    randomnoofstarts:1+Math.floor(Math.random()*9)
   }
   selectedNumber=(clickedNumber)=>{
+      if(this.state.selectedNumbers.indexOf(clickedNumber)>=0){
+        return;
+      }
     this.setState(prevState=>({
       selectedNumbers:prevState.selectedNumbers.concat(clickedNumber)
     }))
-  };
+
+};
   render(){
   return (
     <div className="container">
@@ -65,7 +74,7 @@ class Game extends Component{
       <hr/>
 
     <div className="row">
-    <Stars/>
+    <Stars starsstate={this.state.randomnoofstarts}/>
     <Button/>
     <Answer selectedNumbers={this.state.selectedNumbers}/>
     </div>
