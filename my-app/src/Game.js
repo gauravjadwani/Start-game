@@ -41,11 +41,13 @@ const Button=(props)=>{
     </button>
 
   }
-  console.log(props);
+  console.log(props.noofredraw);
   return(
   <div className="col-md-2">
   {button}
-  <Redraw/>
+  <br/>
+  <br/>
+  <Redraw redraw={props.redraw} noofredraw={props.noofredraw}/>
   </div>
   );
 }
@@ -62,9 +64,14 @@ const Answer=(props)=>{
 }
 
 const Redraw=(props) =>{
+  // console.log(props.noofredraw);
   return(<div>
-    <button className="btn btn-warning">
+    <button className="btn btn-warning btn-sm" onClick={() => props.redraw()}
+    disabled={props.noofredraw===0}
+    >
+
     <Ref/>
+    {props.noofredraw}
     </button>
     </div>)
 }
@@ -89,13 +96,23 @@ const Numbers=(props)=>{
 );
 }
 
+const Done=(props)=>{
+  return (<div>
+    {props.doneStatus}
+    </div>
+  )
+}
+
 Numbers.list=lodash.range(1,10);
 class Game extends Component{
+  static randomNumber=()=>1+Math.floor(Math.random()*9)
   state={
     selectedNumbers:[],
     randomnoofstarts:1+Math.floor(Math.random()*9),
     answerIsCorrect:null,
-    usedNumbers:[]
+    usedNumbers:[],
+    noofredraw:5,
+    doneStatus:null
   }
   selectedNumber=(clickedNumber)=>{
       if(this.state.selectedNumbers.indexOf(clickedNumber)>=0){
@@ -132,6 +149,18 @@ class Game extends Component{
     }))
   };
 
+  redraw=()=>{
+    console.log('redraw clicked');
+    // console.log('previous redraw',prevState.noofredraw--);
+    this.setState(prevState=>({
+      usedNumbers:[],
+      selectedNumbers:[],
+      answerIsCorrect:null,
+      randomnoofstarts:1+Math.floor(Math.random()*9),
+      noofredraw:prevState.noofredraw - 1
+    }))
+  }
+
   render(){
     // const {
     //   selectedNumbers,
@@ -145,14 +174,24 @@ class Game extends Component{
 
     <div className="row">
     <Stars starsstate={this.state.randomnoofstarts}/>
-    <Button selectedNumbers={this.state.selectedNumbers} answerIsCorrect={this.state.answerIsCorrect} checkAnswer={this.checkAnswer} acceptAnswer={this.acceptAnswer}/>
-
+    <Button
+    selectedNumbers={this.state.selectedNumbers}
+    answerIsCorrect={this.state.answerIsCorrect}
+    checkAnswer={this.checkAnswer}
+    acceptAnswer={this.acceptAnswer}
+    redraw={this.redraw}
+    noofredraw={this.state.noofredraw}/>
     <Answer selectedNumbers={this.state.selectedNumbers} unselectedNumber={this.unselectedNumber}/>
     </div>
     <br/>
-    <Numbers selectedNumbers={this.state.selectedNumbers} selectedNumber={this.selectedNumber} usedNumbers={this.state.usedNumbers}/>
+        {
+          this.state.doneStatus ? <Done doneStatus={this.state.doneStatus}/>:
+        <Numbers selectedNumbers={this.state.selectedNumbers}
+        selectedNumber={this.selectedNumber}
+        usedNumbers={this.state.usedNumbers}/>
+}
 
-    </div>
+        </div>
   );
 }
 }
